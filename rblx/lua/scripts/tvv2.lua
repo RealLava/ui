@@ -52,14 +52,25 @@ TextBox.Position = UDim2.new(0.294424742, 0, 0.863999844, 0)
 TextBox.Size = UDim2.new(0, 282, 0, 35)
 TextBox.ClearTextOnFocus = false
 TextBox.Font = Enum.Font.Gotham
-TextBox.PlaceholderText = "link to video (webm)"
+TextBox.PlaceholderText = "link to video (webm or mp4)"
 TextBox.Text = ""
 TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextBox.TextSize = 14.000
 
+local function getFileExtension(url)
+	return url:match("^.+(%..+)$")
+end
+
 TextButton.MouseButton1Click:Connect(function()
 	local url = TextBox.Text
-	writefile('video.webm', request({Url=url}).Body)
-	vf.Video = getcustomasset('video.webm')
+	local fileExtension = getFileExtension(url)
+	local fileName = "video"
+	if fileExtension == ".mp4" then
+		fileName = "video.mp4"
+	else
+		fileName = "video.webm"
+	end
+	writefile(fileName, request({Url=url}).Body)
+	vf.Video = getcustomasset(fileName)
 	vf.Playing = true
 end)
